@@ -43,6 +43,10 @@ export default function (pi: ExtensionAPI) {
 				return;
 			}
 
+			if (currentIntent) {
+				ctx.ui.notify(`Current intent: ${currentIntent}`, "info");
+			}
+
 			const newIntent = await ctx.ui.input(
 				"Session intent",
 				currentIntent || "e.g. Refactor auth module",
