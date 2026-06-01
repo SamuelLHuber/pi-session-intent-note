@@ -1,0 +1,10 @@
+{
+  "name": "pi-session-intent-note",
+  "version": "1.0.0",
+  "description": "A pi extension that lets you set and display a session intent note in the footer",
+  "pi": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}
