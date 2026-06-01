@@ -43,31 +43,11 @@ export default function (pi: ExtensionAPI) {
 				return;
 			}
 
-			if (currentIntent) {
-				ctx.ui.notify(`Current intent: ${currentIntent}`, "info");
-			}
-
-			const newIntent = await ctx.ui.input(
+			const newIntent = await ctx.ui.editor(
 				"Session intent",
-				currentIntent || "e.g. Refactor auth module",
+				currentIntent,
 			);
 
-			if (newIntent !== undefined) {
-				currentIntent = newIntent.trim();
-				pi.appendEntry(INTENT_KEY, { text: currentIntent });
-				updateStatus(ctx);
-				ctx.ui.notify(currentIntent ? "Intent updated" : "Intent cleared", "info");
-			}
-		},
-	});
-
-	pi.registerShortcut("ctrl+period", {
-		description: "Edit session intent",
-		handler: async (ctx) => {
-			const newIntent = await ctx.ui.input(
-				"Session intent",
-				currentIntent || "e.g. Refactor auth module",
-			);
 			if (newIntent !== undefined) {
 				currentIntent = newIntent.trim();
 				pi.appendEntry(INTENT_KEY, { text: currentIntent });
