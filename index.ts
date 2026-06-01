@@ -57,7 +57,7 @@ export default function (pi: ExtensionAPI) {
 		},
 	});
 
-	pi.registerShortcut("ctrl+g", {
+	pi.registerShortcut("ctrl+shift+g", {
 		description: "Edit session intent",
 		handler: async (ctx) => {
 			const newIntent = await ctx.ui.input(
