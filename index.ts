@@ -1,4 +1,4 @@
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
 const INTENT_KEY = "session-intent";
 const MAX_STATUS_LEN = 15;
@@ -11,7 +11,7 @@ function truncateIntent(text: string): string {
 export default function (pi: ExtensionAPI) {
 	let currentIntent = "";
 
-	function updateStatus(ctx: { ui: { setStatus: (key: string, text: string | undefined) => void; theme: { fg: (color: string, text: string) => string } } }) {
+	function updateStatus(ctx: ExtensionContext) {
 		if (currentIntent) {
 			const truncated = truncateIntent(currentIntent);
 			ctx.ui.setStatus(INTENT_KEY, ctx.ui.theme.fg("accent", `Intent: ${truncated}`));
@@ -20,8 +20,9 @@ export default function (pi: ExtensionAPI) {
 		}
 	}
 
-	pi.on("session_start", async (_event, ctx) => {
-		const entries = ctx.sessionManager.getEntries();
+	function restoreIntent(ctx: ExtensionContext) {
+		currentIntent = "";
+		const entries = ctx.sessionManager.getBranch();
 		for (let i = entries.length - 1; i >= 0; i--) {
 			const entry = entries[i];
 			if (entry.type === "custom" && entry.customType === INTENT_KEY) {
@@ -30,7 +31,10 @@ export default function (pi: ExtensionAPI) {
 			}
 		}
 		updateStatus(ctx);
-	});
+	}
+
+	pi.on("session_start", (_event, ctx) => restoreIntent(ctx));
+	pi.on("session_tree", (_event, ctx) => restoreIntent(ctx));
 
 	pi.registerCommand("intent", {
 		description: "Set or edit the session intent",
